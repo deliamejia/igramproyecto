@@ -64,12 +64,33 @@ class PostController extends Controller
 
     }
 
-    public function show(User $user, Post $post)
+    /*public function show(User $user, Post $post)
     {
+        // Verificar si la publicación existe y pertenece al usuario
+        if(!$post || $post->user_id !== $user->id) {
+            // Redirigir al perfil del usuario
+            return redirect()->route('posts.show', ['username' => $user->username]);
+        }
+
         return view('posts.show', [
             'post' => $post,
             'user'=>$user,
         ]);
+    }*/
+
+    public function show($username, $postId){
+        $user =User::where('username', $username) ->firstOrFail();
+        $post =Post::where('id', $postId) ->where('user_id', $user ->id)->first();
+
+        if(!$post){
+            return redirect()->route('posts.index', $username);
+        }
+
+        return view('posts.show', [
+            'post' => $post,
+            'user'=>$user,
+        ]);
+
     }
 
     public function destroy(Post $post)
